@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const { isAfter } = require('date-fns');
 module.exports = (sequelize, DataTypes) => {
   class Task extends Model {
     /**
@@ -23,16 +24,16 @@ module.exports = (sequelize, DataTypes) => {
         field: 'user_id',
         allowNull: false,
         type: DataTypes.INTEGER,
+        validate: {
+          notNull: true,
+        },
       },
       body: {
         type: DataTypes.STRING(512),
         allowNull: false,
         validate: {
-          isEmpty (value) {
-            if (value === '') {
-              throw new Error('body can`t be empty');
-            }
-          },
+          notNull: true,
+          notEmpty: true,
         },
       },
       isDone: {
@@ -43,16 +44,16 @@ module.exports = (sequelize, DataTypes) => {
       deadline: {
         type: DataTypes.DATEONLY,
         isDate: true,
-        validate:{
-          isDate: true
-        }
+        validate: {
+          isDate: true,
+        },
       },
     },
     {
       sequelize,
       modelName: 'Task',
-      tableName: 'task',
-      underscored: true
+      tableName: 'tasks',
+      underscored: true,
     }
   );
   return Task;

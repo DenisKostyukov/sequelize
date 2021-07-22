@@ -11,13 +11,20 @@ module.exports = {
       userId: {
         field: "user_id",
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references:{
+          model: 'users',
+          key: 'id'
+        },
+        onDelete: 'cascade',
+        onUpdate: 'restrict'
       },
       body: {
         type: Sequelize.STRING(512),
         allowNull: false,
       },
       isDone: {
+        field: 'is_done',
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
