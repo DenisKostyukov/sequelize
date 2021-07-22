@@ -15,3 +15,12 @@ module.exports.createTask = async (req, res, next) => {
     //next(error);
   }
 };
+module.exports.getUserTasks = async (req, res, next) => {
+  try {
+    const { userInstance } = req;
+    const tasks = await userInstance.getTasks();
+    res.send(tasks);
+  } catch(error){
+    next(error)
+  }
+};
