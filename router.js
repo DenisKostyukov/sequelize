@@ -7,6 +7,7 @@ const router = Router();
 
 router.post('/user', UserController.createUser);
 router.get('/users', UserController.getAllUsers);
+router.get('/user/:id', UserController.getUser);
 router.post('/user/:id/task', UserMW.checkUser, TaskController.createTask);
-router.get('/user/:id/task', UserMW.checkUser, TaskController.getUserTasks)
+router.get('/user/:id/task', UserMW.checkUser, TaskController.getUserTasks);
 module.exports = router;
