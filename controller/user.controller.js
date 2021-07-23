@@ -20,7 +20,7 @@ module.exports.getAllUsers = async (req, res, next) => {
   try {
     const [count, users] = await User.findAndCountAll({
       attributes: {
-        exclude: ['password'],
+        exclude: ["password"],
       },
     });
     if (count === 0) {
@@ -61,12 +61,12 @@ module.exports.updateUser = async (req, res, next) => {
       body,
     } = req;
     const [rowsCount, updatedUser] = await User.update(body, {
-      where: { id: id },
+      where: { id},
       returning: true,
       limit: 1,
     });
     if (rowsCount !== 1) {
-      return next(createError(400, "User can't be updated"));
+      return next(createError(400, 'User can\'t be updated'));
     }
     updatedUser.password = undefined;
 
@@ -86,6 +86,6 @@ module.exports.deleteUser = async (req, res, next) => {
     }
     res.send({ data: rowsCount });
   } catch (err) {
-    next(err );
+    next(err);
   }
 };
