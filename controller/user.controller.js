@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const createError = require('http-errors');
+
 module.exports.createUser = async (req, res, next) => {
   try {
     const { body } = req;
@@ -8,37 +9,36 @@ module.exports.createUser = async (req, res, next) => {
     res.status(201).send({
       data: createdUser,
     });
-  } catch (error) {
-    res.status(400).send({
-      error,
-    });
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 
 module.exports.getAllUsers = async (req, res, next) => {
   try {
-    const [count, users] = await User.findAndCountAll({
+    const users = await User.findAll({
       attributes: {
-        exclude: ["password"],
+        exclude: ['password'],
       },
     });
-    if (count === 0) {
+    if (!users.length) {
       const err = createError(404, 'Users not found');
       return next(err);
     }
     res.status(200).send({
       data: users,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
+
 module.exports.getUser = async (req, res, next) => {
   try {
     const {
       params: { id },
     } = req;
+
     const user = await User.findByPk(id, {
       attributes: {
         exclude: ['password'],
@@ -49,8 +49,8 @@ module.exports.getUser = async (req, res, next) => {
       return next(err);
     }
     res.send(user);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -60,30 +60,40 @@ module.exports.updateUser = async (req, res, next) => {
       params: { id },
       body,
     } = req;
+
     const [rowsCount, updatedUser] = await User.update(body, {
-      where: { id},
+      where: { id },
       returning: true,
-      limit: 1,
     });
     if (rowsCount !== 1) {
-      return next(createError(400, 'User can\'t be updated'));
+      return next(createError(400, "User can't be updated"));
     }
+
+    //delete updatedUser.password;
     updatedUser.password = undefined;
 
-    res.send({ data: updatedUser });
+    res.send({
+      data: updatedUser,
+    });
   } catch (err) {
     next(err);
   }
 };
+
 module.exports.deleteUser = async (req, res, next) => {
   try {
     const {
       params: { id },
     } = req;
-    const rowsCount = await User.destroy({ where: { id }, limit: 1 });
+
+    const rowsCount = await User.destroy({
+      where: { id },
+    });
+
     if (rowsCount !== 1) {
       return next(createError(404, 'User not found'));
     }
+
     res.send({ data: rowsCount });
   } catch (err) {
     next(err);
